@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A multimodal color recognition and evaluation portfolio project supporting names, spelling, HEX, RGB, HSL, HSV, CMYK, LAB, LCH, XYZ, YUV/YCbCr, spot-color references, design tokens, wavelength, voice, image sampling, and timed evaluation.">
+<title>Multimodal Color Intelligence Evaluator</title>
+<style>
+:root{
+  --bg:#e6efda;
+  --ink:#545454;
+  --ink-2:#3f3f3f;
+  --line:#d9d9d9;
+  --panel:#f8fbf4;
+  --white:#ffffff;
+  --accent:#4d9d9d;
+  --hover:#4d2027;
+  --shadow:0 22px 55px rgba(84,84,84,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(77,157,157,.12),transparent 24rem),
+    radial-gradient(circle at 95% 12%,rgba(77,32,39,.08),transparent 28rem),
+    var(--bg);
+  color:var(--ink);
+  overflow-x:hidden;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.shell{width:min(1260px,calc(100% - 36px));margin:auto}
+.site-header{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(16px);
+  background:rgba(230,239,218,.90);
+  border-bottom:1px solid rgba(84,84,84,.12);
+}
+.nav{
+  min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:-.02em}
+.brand-mark{
+  width:30px;height:30px;border:1px solid var(--ink);position:relative;background:var(--panel);
+}
+.brand-mark::before,.brand-mark::after{
+  content:"";position:absolute;width:10px;height:10px;
+}
+.brand-mark::before{left:4px;top:4px;background:var(--accent)}
+.brand-mark::after{right:4px;bottom:4px;background:var(--hover)}
+.nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nav-link,.nav-cta{
+  min-height:40px;display:inline-flex;align-items:center;padding:8px 12px;border:1px solid transparent;
+  font-size:13px;font-weight:800;border-radius:2px;
+}
+.nav-cta{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.hero{padding:68px 0 26px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:34px;align-items:stretch}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);
+  background:rgba(248,251,244,.75);padding:7px 10px;font-size:12px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.08em;border-radius:2px;
+}
+.eyebrow-dot{width:8px;height:8px;background:var(--accent)}
+.hero h1{
+  margin:22px 0 18px;font-size:clamp(48px,7.3vw,94px);line-height:.92;letter-spacing:-.065em;
+  color:var(--ink-2);max-width:880px;
+}
+.hero h1 em{font-style:normal;color:var(--hover)}
+.hero-copy{max-width:760px;font-size:18px;line-height:1.65;margin:0}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{
+  min-height:48px;padding:11px 16px;border:1px solid var(--ink);border-radius:2px;font-weight:900;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-secondary{background:rgba(248,251,244,.76);color:var(--ink)}
+
+.hero-visual{
+  border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:18px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;border-radius:2px;min-height:520px;
+}
+.hero-visual::before{
+  content:"";position:absolute;inset:-20% -10% auto auto;width:360px;height:360px;
+  background:radial-gradient(circle,rgba(77,157,157,.46),transparent 65%);
+  pointer-events:none;
+}
+.visual-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1}
+.visual-label{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.live-pill{border:1px solid rgba(230,239,218,.55);padding:6px 9px;font-size:11px;font-weight:900}
+.hero-swatch{
+  height:225px;margin-top:28px;border:1px solid rgba(230,239,218,.8);background:#4d9d9d;
+  position:relative;z-index:1;transition:background .6s ease;
+}
+.visual-name{font-size:42px;font-weight:950;letter-spacing:-.04em;margin-top:18px;position:relative;z-index:1}
+.visual-values{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;position:relative;z-index:1}
+.visual-value{border:1px solid rgba(230,239,218,.28);padding:10px}
+.visual-value b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.visual-value span{font-weight:850}
+
+.proof-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);margin:28px 0 72px;
+  background:rgba(248,251,244,.74);
+}
+.proof-item{padding:18px;border-left:1px solid var(--ink)}
+.proof-item:first-child{border-left:0}
+.proof-number{font-size:28px;font-weight:950;color:var(--hover);letter-spacing:-.04em}
+.proof-text{font-size:12px;font-weight:800;line-height:1.4;margin-top:4px}
+
+.section-head{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:end;margin-bottom:20px}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:950;color:var(--hover)}
+.section-head h2{font-size:clamp(34px,4.5vw,58px);letter-spacing:-.045em;line-height:1;margin:6px 0 0;color:var(--ink-2)}
+.section-head p{margin:0;font-size:16px;line-height:1.65}
+
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:72px}
+.feature-card{
+  border:1px solid var(--line);background:rgba(248,251,244,.84);padding:22px;min-height:210px;border-radius:2px;
+}
+.feature-index{font-size:11px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;color:var(--hover)}
+.feature-card h3{font-size:24px;margin:28px 0 8px;letter-spacing:-.03em;color:var(--ink-2)}
+.feature-card p{font-size:14px;line-height:1.6;margin:0}
+.feature-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.feature-tags span{font-size:11px;font-weight:800;border:1px solid var(--line);padding:5px 7px;background:#fff}
+
+#evaluator{scroll-margin-top:86px;padding-bottom:70px}
+.tool-head{
+  display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:18px;
+}
+.tool-head h2{font-size:clamp(34px,5vw,62px);line-height:.96;letter-spacing:-.05em;margin:5px 0 0;color:var(--ink-2)}
+.tool-note{max-width:520px;font-size:13px;line-height:1.55}
+
+.tool-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;align-items:start}
+.card{
+  background:rgba(248,251,244,.94);border:1px solid var(--line);padding:20px;border-radius:2px;
+  box-shadow:0 8px 28px rgba(84,84,84,.06);
+}
+.card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.card h3{font-size:20px;margin:0;color:var(--ink-2)}
+.sub{font-size:13px;line-height:1.5;margin:5px 0 0}
+
+.mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:16px}
+.mode{
+  border:1px solid var(--line);background:#fff;padding:10px;text-align:left;min-height:72px;border-radius:2px;color:var(--ink)
+}
+.mode strong{display:block;font-size:12px;margin-bottom:4px}
+.mode span{display:block;font-size:10px;line-height:1.35}
+.mode.active{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent);background:#f4f8ee}
+
+.panel{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.hidden{display:none!important}
+label{display:block;font-size:12px;font-weight:900;margin:12px 0 6px}
+input[type="text"],input[type="number"],input[type="file"],select,textarea{
+  width:100%;min-height:44px;border:1px solid var(--ink);background:#fff;color:var(--ink);
+  padding:10px 12px;border-radius:2px;outline:none;
+}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.helper{font-size:11px;line-height:1.45;margin-top:7px}
+.status{font-size:11px;font-weight:850;margin-top:8px}
+
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.action{
+  min-height:44px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);
+  padding:9px 13px;font-weight:900;border-radius:2px;
+}
+.action.secondary{background:var(--line);color:var(--ink)}
+
+.image-area{margin-top:10px;border:1px dashed var(--ink);padding:10px;background:#fff}
+canvas{width:100%;max-height:320px;object-fit:contain;border:1px solid var(--line);cursor:crosshair}
+
+.eval-settings{margin-top:16px;border:1px solid var(--line);background:#fff;padding:14px}
+.flag-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.flag-option{
+  display:flex;align-items:flex-start;gap:8px;margin:0;border:1px solid var(--line);
+  padding:9px;background:#fff;font-size:11px;font-weight:800;
+}
+.flag-option input{width:17px;height:17px;flex:0 0 auto;accent-color:var(--accent)}
+.reference-result{font-size:11px;line-height:1.5;margin-top:7px}
+
+.result-card{position:sticky;top:86px}
+.primary-result{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:stretch;margin-top:14px}
+.swatch{
+  min-height:150px;border:1px solid var(--ink);background:#4d9d9d;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.result-meta{border:1px solid var(--line);background:#fff;padding:14px}
+.result-name{font-size:34px;font-weight:950;line-height:1;letter-spacing:-.035em;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:122px 1fr;gap:8px;font-size:12px;margin-top:8px}
+.kv span{font-weight:750}
+.kv b{overflow-wrap:anywhere}
+
+.score-panel{background:var(--ink);color:var(--bg);padding:16px;margin-top:12px;border:1px solid var(--ink)}
+.score-top{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.score-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:950}
+.score{font-size:54px;font-weight:950;line-height:1;margin-top:4px}
+.score small{font-size:16px}
+.grade{border:1px solid rgba(230,239,218,.7);padding:9px 11px;font-weight:900;font-size:12px;text-align:center}
+.meter{height:9px;background:rgba(230,239,218,.2);margin-top:12px;border:1px solid rgba(230,239,218,.45)}
+.meter > div{height:100%;background:var(--accent);width:0%}
+.score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px}
+.score-mini{border:1px solid rgba(230,239,218,.22);padding:9px}
+.score-mini b{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.score-mini span{font-size:12px;font-weight:850}
+
+.conversions{border:1px solid var(--line);background:#fff;margin-top:12px}
+.c-row{display:grid;grid-template-columns:142px 1fr;border-top:1px solid var(--line)}
+.c-row:first-child{border-top:0}
+.c-row div{padding:9px 11px;font-size:11px;overflow-wrap:anywhere}
+.c-row div:first-child{font-weight:900;background:#f2f5ed}
+
+.flags-box,.report-box{border:1px solid var(--line);background:#fff;padding:13px;margin-top:12px}
+.box-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+.box-head h4{margin:0;font-size:14px;color:var(--ink-2)}
+.flag-list{display:flex;flex-wrap:wrap;gap:6px}
+.flag-chip{border:1px solid var(--line);padding:5px 7px;font-size:10px;font-weight:850;background:#f5f5f5}
+.flag-chip.good{background:var(--bg)}
+.flag-chip.warn{border-color:var(--hover);color:var(--hover);background:#fff}
+.report{
+  white-space:pre-wrap;overflow-wrap:anywhere;max-height:400px;overflow:auto;
+  background:var(--ink);color:var(--bg);padding:12px;min-height:245px;
+  font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;border:1px solid var(--ink)
+}
+.report-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.report-actions button{min-height:38px;border:1px solid var(--ink);background:var(--line);color:var(--ink);padding:7px 10px;font-size:11px;font-weight:900}
+
+.accuracy-notes{
+  margin-top:14px;border-left:4px solid var(--accent);background:rgba(255,255,255,.55);padding:12px;
+  font-size:11px;line-height:1.55;
+}
+
+.footer{border-top:1px solid rgba(84,84,84,.18);padding:24px 0 36px;font-size:12px;line-height:1.6}
+.footer-grid{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+
+button:hover,.btn:hover,.nav-link:hover,.nav-cta:hover,.mode:hover,.feature-tags span:hover,.flag-chip:hover{
+  background:var(--hover)!important;color:var(--bg)!important;border-color:var(--hover)!important;
+}
+.card:hover,.feature-card:hover,.hero-visual:hover,.eval-settings:hover,.flags-box:hover,.report-box:hover,
+.primary-result:hover,.result-meta:hover,.conversions:hover,.image-area:hover,.swatch:hover{
+  border-color:var(--hover)!important;
+}
+input:hover,select:hover,textarea:hover,canvas:hover,.flag-option:hover{border-color:var(--hover)!important}
+input[type="checkbox"]:hover{accent-color:var(--hover)}
+.c-row:hover div:first-child{background:var(--hover);color:var(--bg)}
+a:hover{color:var(--hover)}
+
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(77,157,157,.35);outline-offset:2px;
+}
+
+@media(max-width:1050px){
+  .hero-grid,.tool-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:auto}
+  .result-card{position:static}
+  .mode-grid{grid-template-columns:repeat(3,1fr)}
+  .proof-strip{grid-template-columns:repeat(2,1fr)}
+  .proof-item:nth-child(3){border-left:0;border-top:1px solid var(--ink)}
+  .proof-item:nth-child(4){border-top:1px solid var(--ink)}
+}
+@media(max-width:760px){
+  .shell{width:min(100% - 20px,1260px)}
+  .nav-links .nav-link{display:none}
+  .hero{padding-top:36px}
+  .hero h1{font-size:clamp(46px,15vw,72px)}
+  .hero-grid{gap:18px}
+  .visual-values{grid-template-columns:1fr}
+  .section-head{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:1fr}
+  .tool-head{align-items:flex-start;flex-direction:column}
+  .mode-grid{grid-template-columns:repeat(2,1fr)}
+  .row,.row4,.flag-grid{grid-template-columns:1fr}
+  .primary-result{grid-template-columns:1fr}
+  .swatch{min-height:125px}
+}
+@media(max-width:480px){
+  .proof-strip{grid-template-columns:1fr}
+  .proof-item{border-left:0!important;border-top:1px solid var(--ink)}
+  .proof-item:first-child{border-top:0}
+  .mode-grid{grid-template-columns:1fr}
+  .hero-actions,.actions,.report-actions{display:grid;grid-template-columns:1fr}
+  .btn,.action,.report-actions button{width:100%}
+  .score-grid{grid-template-columns:1fr}
+  .c-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="shell nav">
+    <a class="brand" href="#top" aria-label="Color Intelligence home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Color Intelligence Lab</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a class="nav-link" href="#capabilities">Capabilities</a>
+      <a class="nav-link" href="#evaluator">Evaluator</a>
+      <a class="nav-cta" href="#evaluator">Launch evaluator →</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span>Portfolio AI Project · Multimodal Evaluation</div>
+        <h1>Color recognition with <em>measurable confidence.</em></h1>
+        <p class="hero-copy">
+          A human-centered color intelligence evaluator that accepts words, misspellings, codes, perceptual color spaces,
+          print values, voice, image samples, and physical wavelength input—then normalizes the result, checks quality,
+          compares references, and produces a structured evaluation report.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#evaluator">Evaluate a color →</a>
+          <a class="btn btn-secondary" href="#capabilities">Explore the methods</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Live project preview">
+        <div class="visual-top">
+          <span class="visual-label">Live color intelligence</span>
+          <span class="live-pill">CIEDE2000 · sRGB D65</span>
+        </div>
+        <div class="hero-swatch" id="heroSwatch"></div>
+        <div class="visual-name" id="heroName">Teal</div>
+        <div class="visual-values">
+          <div class="visual-value"><b>HEX</b><span id="heroHex">#008080</span></div>
+          <div class="visual-value"><b>RGB</b><span id="heroRgb">0, 128, 128</span></div>
+          <div class="visual-value"><b>LAB</b><span id="heroLab">—</span></div>
+          <div class="visual-value"><b>Accessibility</b><span id="heroContrast">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell proof-strip">
+      <div class="proof-item"><div class="proof-number">16+</div><div class="proof-text">Input and recognition methods across text, screen, print, science, voice, and image.</div></div>
+      <div class="proof-item"><div class="proof-number">ΔE00</div><div class="proof-text">Perceptual nearest-color and reference comparison using CIEDE2000.</div></div>
+      <div class="proof-item"><div class="proof-number">D65</div><div class="proof-text">sRGB ↔ CIE XYZ ↔ CIELAB conversion using the D65 reference white.</div></div>
+      <div class="proof-item"><div class="proof-number">100</div><div class="proof-text">Structured evaluation score with confidence, validity, fidelity, flags, and timing.</div></div>
+    </div>
+  </section>
+
+  <section class="shell" id="capabilities">
+    <div class="section-head">
+      <div>
+        <div class="kicker">One color · many representations</div>
+        <h2>Built to recognize, translate, and evaluate.</h2>
+      </div>
+      <p>
+        The interface combines deterministic color-science conversions with multimodal browser capabilities.
+        It does not pretend every representation is equally exact: print, spot colors, wavelength, speech,
+        image profiles, and out-of-gamut perceptual colors are explicitly flagged when approximation matters.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-index">01 · Recognize</div>
+        <h3>Understand how the color was expressed.</h3>
+        <p>Exact names, everyday color vocabulary, conservative typo correction, voice input, image sampling, design tokens, and timed recognition.</p>
+        <div class="feature-tags"><span>Name</span><span>Spelling</span><span>Voice</span><span>Image</span><span>Tokens</span></div>
+      </article>
+      <article class="feature-card">
+        <div class="feature-index">02 · Translate</div>
+        <h3>Move between screen, print, perceptual, and scientific spaces.</h3>
+        <p>HEX/RGB, HSL, HSV/HSB, generic CMYK, CIELAB, LCH, CIE XYZ, YCbCr, YUV, wavelength approximation, and reference libraries.</p>
+        <div class="feature-tags"><span>RGB</span><span>LAB</span><span>LCH</span><span>XYZ</span><span>CMYK</span></div>
+      </article>
+      <article class="feature-card">
+        <div class="feature-index">03 · Evaluate</div>
+        <h3>Measure confidence instead of forcing a guess.</h3>
+        <p>Reference comparison, CIEDE2000, gamut clipping detection, quality flags, accessibility contrast checks, response timing, and exportable reports.</p>
+        <div class="feature-tags"><span>ΔE00</span><span>Quality flags</span><span>Contrast</span><span>Report</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="shell" id="evaluator">
+    <div class="tool-head">
+      <div>
+        <div class="kicker">Interactive evaluator</div>
+        <h2>Test the color.</h2>
+      </div>
+      <div class="tool-note">
+        Choose any supported input mode. Press <strong>Enter</strong> in a field or choose <strong>Evaluate color</strong>.
+        Exact named colors preview immediately; low-confidence spelling matches are rejected instead of being forced into unrelated colors.
+      </div>
+    </div>
+
+    <div class="tool-grid">
+      <section class="card">
+        <div class="card-title">
+          <div>
+            <h3>1. Select an input method</h3>
+            <p class="sub">Each method is validated according to its own range and assumptions.</p>
+          </div>
+          <span class="eyebrow" style="font-size:9px">Human-in-the-loop</span>
+        </div>
+
+        <div class="mode-grid">
+          <button class="mode active" data-mode="name"><strong>Name / spelling</strong><span>coffee, cream, turqoise</span></button>
+          <button class="mode" data-mode="hex"><strong>HEX</strong><span>#4d9d9d</span></button>
+          <button class="mode" data-mode="rgb"><strong>RGB</strong><span>0–255</span></button>
+          <button class="mode" data-mode="hsl"><strong>HSL</strong><span>Hue · Sat · Lightness</span></button>
+          <button class="mode" data-mode="hsv"><strong>HSV / HSB</strong><span>Hue · Sat · Value</span></button>
+          <button class="mode" data-mode="cmyk"><strong>CMYK</strong><span>Generic, non-ICC</span></button>
+          <button class="mode" data-mode="lab"><strong>CIELAB</strong><span>D65 · L*a*b*</span></button>
+          <button class="mode" data-mode="lch"><strong>LCH</strong><span>Cylindrical CIELAB</span></button>
+          <button class="mode" data-mode="xyz"><strong>CIE XYZ</strong><span>D65 · 2° observer</span></button>
+          <button class="mode" data-mode="video"><strong>YUV / YCbCr</strong><span>Analog-style / BT.601</span></button>
+          <button class="mode" data-mode="pantone"><strong>Spot color ref.</strong><span>Small demo subset</span></button>
+          <button class="mode" data-mode="token"><strong>Design token</strong><span>blue-500, gray-900</span></button>
+          <button class="mode" data-mode="wavelength"><strong>Wavelength</strong><span>380–700 nm</span></button>
+          <button class="mode" data-mode="voice"><strong>Voice</strong><span>Speak a color name</span></button>
+          <button class="mode" data-mode="image"><strong>Image sample</strong><span>Click a pixel</span></button>
+          <button class="mode" data-mode="challenge"><strong>Timed challenge</strong><span>Accuracy + speed</span></button>
+        </div>
+
+        <div class="panel" id="panel-name">
+          <label for="colorName">Color name or approximate spelling</label>
+          <input id="colorName" type="text" autocomplete="off" placeholder="Try coffee, cream, yellow, sage, turquoise…">
+          <div class="helper">Uses a broad CSS + everyday design vocabulary. Weak matches are rejected instead of guessed.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-hex">
+          <label for="hexInput">HEX</label>
+          <input id="hexInput" type="text" autocomplete="off" placeholder="#4d9d9d or #09c">
+        </div>
+
+        <div class="panel hidden" id="panel-rgb">
+          <label>RGB (sRGB, 0–255)</label>
+          <div class="row">
+            <input id="rInput" type="number" min="0" max="255" placeholder="R">
+            <input id="gInput" type="number" min="0" max="255" placeholder="G">
+            <input id="bInput" type="number" min="0" max="255" placeholder="B">
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-hsl">
+          <label>HSL</label>
+          <div class="row">
+            <input id="hslH" type="number" placeholder="Hue 0–360">
+            <input id="hslS" type="number" min="0" max="100" placeholder="Saturation %">
+            <input id="hslL" type="number" min="0" max="100" placeholder="Lightness %">
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-hsv">
+          <label>HSV / HSB</label>
+          <div class="row">
+            <input id="hsvH" type="number" placeholder="Hue 0–360">
+            <input id="hsvS" type="number" min="0" max="100" placeholder="Saturation %">
+            <input id="hsvV" type="number" min="0" max="100" placeholder="Value %">
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-cmyk">
+          <label>CMYK (generic conversion, 0–100%)</label>
+          <div class="row4">
+            <input id="cInput" type="number" min="0" max="100" placeholder="C %">
+            <input id="mInput" type="number" min="0" max="100" placeholder="M %">
+            <input id="yInput" type="number" min="0" max="100" placeholder="Y %">
+            <input id="kInput" type="number" min="0" max="100" placeholder="K %">
+          </div>
+          <div class="helper">CMYK is device/profile dependent. This prototype uses the standard simple conversion, not an ICC press profile.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-lab">
+          <label>CIELAB (D65)</label>
+          <div class="row">
+            <input id="labL" type="number" min="0" max="100" placeholder="L* 0–100">
+            <input id="labA" type="number" placeholder="a*">
+            <input id="labB" type="number" placeholder="b*">
+          </div>
+          <div class="helper">Out-of-sRGB values are clipped for display and flagged in the report.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-lch">
+          <label>LCH (CIELAB cylindrical form)</label>
+          <div class="row">
+            <input id="lchL" type="number" min="0" max="100" placeholder="L* 0–100">
+            <input id="lchC" type="number" min="0" placeholder="Chroma ≥ 0">
+            <input id="lchH" type="number" placeholder="Hue 0–360">
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-xyz">
+          <label>CIE XYZ (D65 reference)</label>
+          <div class="row">
+            <input id="xyzX" type="number" placeholder="X">
+            <input id="xyzY" type="number" placeholder="Y">
+            <input id="xyzZ" type="number" placeholder="Z">
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-video">
+          <label for="videoModel">Video / luma-chroma representation</label>
+          <select id="videoModel">
+            <option value="ycbcr">YCbCr — BT.601 full range (0–255)</option>
+            <option value="yuv">YUV — normalized analog-style approximation</option>
+          </select>
+          <div id="video-ycbcr">
+            <label>YCbCr values</label>
+            <div class="row">
+              <input id="yccY" type="number" min="0" max="255" placeholder="Y">
+              <input id="yccCb" type="number" min="0" max="255" placeholder="Cb">
+              <input id="yccCr" type="number" min="0" max="255" placeholder="Cr">
+            </div>
+          </div>
+          <div id="video-yuv" class="hidden">
+            <label>YUV normalized values</label>
+            <div class="row">
+              <input id="yuvY" type="number" step="0.001" placeholder="Y 0–1">
+              <input id="yuvU" type="number" step="0.001" placeholder="U ≈ -0.436…0.436">
+              <input id="yuvV" type="number" step="0.001" placeholder="V ≈ -0.615…0.615">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-pantone">
+          <label for="pantoneInput">Spot-color reference code</label>
+          <input id="pantoneInput" type="text" autocomplete="off" placeholder="Example: PMS 286 C">
+          <div class="helper">Only a small demonstrative reference subset is included. Unknown codes are not guessed. This is not an authoritative Pantone database.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-token">
+          <label for="tokenInput">Named palette / design token</label>
+          <input id="tokenInput" type="text" autocomplete="off" placeholder="blue-500, gray-900, emerald-400">
+          <div class="helper">Uses a small Tailwind-style demonstration token set; real design-system values are version/project specific.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-wavelength">
+          <label for="waveInput">Visible-light wavelength</label>
+          <input id="waveInput" type="number" min="380" max="700" placeholder="450">
+          <div class="helper">Single wavelength applies only to spectral colors. Magenta, brown, many pastels, and mixed colors do not have one unique wavelength.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-voice">
+          <label>Speak a color name</label>
+          <div class="actions"><button class="action" id="listenBtn">Start listening</button></div>
+          <div id="voiceStatus" class="status">Speech recognition has not started.</div>
+          <div class="helper">Browser speech APIs vary. Recognition confidence is included when the browser supplies it.</div>
+        </div>
+
+        <div class="panel hidden" id="panel-image">
+          <label for="imageInput">Upload an image</label>
+          <input id="imageInput" type="file" accept="image/*">
+          <div class="image-area">
+            <canvas id="imageCanvas" width="720" height="400" aria-label="Uploaded image color sampler"></canvas>
+            <div class="helper">Click a visible pixel to sample its sRGB value. Embedded color-profile handling depends on the browser.</div>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-challenge">
+          <label>Timed recognition</label>
+          <div class="primary-result">
+            <div id="challengeSwatch" class="swatch"></div>
+            <div class="result-meta">
+              <div class="result-name" id="challengePrompt">Ready?</div>
+              <p class="sub">Choose Start challenge, then type the displayed color's nearest common name.</p>
+              <label for="challengeAnswer">Your answer</label>
+              <input id="challengeAnswer" type="text" autocomplete="off" placeholder="Type a color name">
+            </div>
+          </div>
+        </div>
+
+        <div class="eval-settings">
+          <div class="card-title">
+            <div>
+              <h3 style="font-size:16px">Evaluation settings</h3>
+              <p class="sub">Optional reference comparison and human-review controls.</p>
+            </div>
+          </div>
+
+          <label for="targetColor">Expected / reference color (optional)</label>
+          <input id="targetColor" type="text" autocomplete="off" placeholder="Name or HEX, e.g. cream or #FFFDD0">
+          <div id="referenceResult" class="reference-result">No reference target set.</div>
+
+          <label>Manual quality flags</label>
+          <div class="flag-grid">
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Approximate or inferred result">Approximate or inferred result</label>
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Ambiguous color naming">Ambiguous color naming</label>
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Possible gamut clipping">Possible gamut clipping</label>
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Print / screen mismatch risk">Print / screen mismatch risk</label>
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Browser input limitation">Browser input limitation</label>
+            <label class="flag-option"><input type="checkbox" class="manual-flag" value="Needs human review">Needs human review</label>
+          </div>
+
+          <label for="evaluatorNotes">Evaluator notes</label>
+          <textarea id="evaluatorNotes" placeholder="Add observations, corrections, context, or reasons for human review."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="action" id="evaluateBtn">Evaluate color</button>
+          <button class="action secondary" id="speakBtn">Say color name</button>
+          <button class="action secondary" id="startChallengeBtn">Start challenge</button>
+          <button class="action secondary" id="loadExampleBtn">Load showcase example</button>
+          <button class="action secondary" id="resetBtn">Reset</button>
+        </div>
+      </section>
+
+      <aside class="card result-card">
+        <div class="card-title">
+          <div>
+            <h3>2. Recognition & evaluation</h3>
+            <p class="sub">Normalized result, color-science conversions, quality checks, and structured report.</p>
+          </div>
+        </div>
+
+        <div class="primary-result">
+          <div class="swatch" id="swatch"></div>
+          <div class="result-meta">
+            <div class="result-name" id="resultName">Teal</div>
+            <div class="kv"><span>HEX</span><b id="resultHex">#008080</b></div>
+            <div class="kv"><span>RGB</span><b id="resultRgb">0, 128, 128</b></div>
+            <div class="kv"><span>Nearest name</span><b id="nearestName">teal</b></div>
+            <div class="kv"><span>Preferred text</span><b id="contrastText">—</b></div>
+          </div>
+        </div>
+
+        <div class="score-panel">
+          <div class="score-top">
+            <div>
+              <div class="score-kicker">Overall evaluation score</div>
+              <div class="score"><span id="evaluationScore">—</span><small>/100</small></div>
+            </div>
+            <div class="grade" id="evaluationGrade">Awaiting evaluation</div>
+          </div>
+          <div class="meter"><div id="confidenceBar"></div></div>
+          <div class="score-grid">
+            <div class="score-mini"><b>Recognition confidence</b><span id="confidenceText">—</span></div>
+            <div class="score-mini"><b>Input validity</b><span id="validityScore">—</span></div>
+            <div class="score-mini"><b>Conversion fidelity</b><span id="fidelityScore">—</span></div>
+            <div class="score-mini"><b>Reference accuracy</b><span id="accuracyScore">Not supplied</span></div>
+            <div class="score-mini"><b>Nearest-name ΔE00</b><span id="distanceScore">—</span></div>
+            <div class="score-mini"><b>Response time</b><span id="timeScore">Not timed</span></div>
+          </div>
+        </div>
+
+        <div class="conversions">
+          <div class="c-row"><div>HSL</div><div id="outHsl">—</div></div>
+          <div class="c-row"><div>HSV / HSB</div><div id="outHsv">—</div></div>
+          <div class="c-row"><div>CMYK</div><div id="outCmyk">—</div></div>
+          <div class="c-row"><div>CIELAB (D65)</div><div id="outLab">—</div></div>
+          <div class="c-row"><div>LCH</div><div id="outLch">—</div></div>
+          <div class="c-row"><div>CIE XYZ (D65)</div><div id="outXyz">—</div></div>
+          <div class="c-row"><div>YCbCr (BT.601)</div><div id="outYcc">—</div></div>
+          <div class="c-row"><div>YUV</div><div id="outYuv">—</div></div>
+          <div class="c-row"><div>Spot-color reference</div><div id="outPantone">—</div></div>
+          <div class="c-row"><div>Design-token reference</div><div id="outToken">—</div></div>
+          <div class="c-row"><div>Spectral wavelength</div><div id="outWave">—</div></div>
+        </div>
+
+        <div class="flags-box">
+          <div class="box-head"><h4>Quality flags</h4><span id="flagCount" class="status" style="margin:0">0 concerns</span></div>
+          <div id="qualityFlagList" class="flag-list"><span class="flag-chip good">Run an evaluation to generate flags</span></div>
+        </div>
+
+        <div class="report-box">
+          <div class="box-head"><h4>Structured report</h4><span id="reportTimestamp" class="status" style="margin:0">Not generated</span></div>
+          <div class="report" id="structuredReport">Run an evaluation to generate a structured report.</div>
+          <div class="report-actions">
+            <button id="copyReportBtn">Copy Report</button>
+            <button id="downloadReportBtn">Download Report</button>
+            <button id="copyJsonBtn">Copy JSON</button>
+            <button id="clearReportBtn">Clear Report</button>
+          </div>
+        </div>
+
+        <div class="accuracy-notes" id="methodNote">
+          <strong>Accuracy model:</strong> deterministic sRGB/HSL/HSV/XYZ/LAB/LCH/YCbCr/YUV transforms; CIEDE2000 for perceptual comparison;
+          explicit approximation flags for generic CMYK, spot-color references, wavelength, speech, image profiles, and sRGB gamut clipping.
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-grid">
+    <div><strong>Multimodal Color Intelligence Evaluator</strong><br>Portfolio prototype for color recognition, data validation, multimodal interaction, and human-centered evaluation.</div>
+    <div>Static browser app · No uploaded images or evaluations are sent to a server.</div>
+  </div>
+</footer>
+
+<script>
+const NAMED_COLORS={"aliceblue":"#F0F8FF","antiquewhite":"#FAEBD7","aqua":"#00FFFF","aquamarine":"#7FFFD4","azure":"#F0FFFF","beige":"#F5F5DC","bisque":"#FFE4C4","black":"#000000","blanchedalmond":"#FFEBCD","blue":"#0000FF","blueviolet":"#8A2BE2","brown":"#A52A2A","burlywood":"#DEB887","cadetblue":"#5F9EA0","chartreuse":"#7FFF00","chocolate":"#D2691E","coral":"#FF7F50","cornflowerblue":"#6495ED","cornsilk":"#FFF8DC","crimson":"#DC143C","cyan":"#00FFFF","darkblue":"#00008B","darkcyan":"#008B8B","darkgoldenrod":"#B8860B","darkgray":"#A9A9A9","darkgreen":"#006400","darkgrey":"#A9A9A9","darkkhaki":"#BDB76B","darkmagenta":"#8B008B","darkolivegreen":"#556B2F","darkorange":"#FF8C00","darkorchid":"#9932CC","darkred":"#8B0000","darksalmon":"#E9967A","darkseagreen":"#8FBC8F","darkslateblue":"#483D8B","darkslategray":"#2F4F4F","darkslategrey":"#2F4F4F","darkturquoise":"#00CED1","darkviolet":"#9400D3","deeppink":"#FF1493","deepskyblue":"#00BFFF","dimgray":"#696969","dimgrey":"#696969","dodgerblue":"#1E90FF","firebrick":"#B22222","floralwhite":"#FFFAF0","forestgreen":"#228B22","fuchsia":"#FF00FF","gainsboro":"#DCDCDC","ghostwhite":"#F8F8FF","gold":"#FFD700","goldenrod":"#DAA520","gray":"#808080","green":"#008000","greenyellow":"#ADFF2F","grey":"#808080","honeydew":"#F0FFF0","hotpink":"#FF69B4","indianred":"#CD5C5C","indigo":"#4B0082","ivory":"#FFFFF0","khaki":"#F0E68C","lavender":"#E6E6FA","lavenderblush":"#FFF0F5","lawngreen":"#7CFC00","lemonchiffon":"#FFFACD","lightblue":"#ADD8E6","lightcoral":"#F08080","lightcyan":"#E0FFFF","lightgoldenrodyellow":"#FAFAD2","lightgray":"#D3D3D3","lightgreen":"#90EE90","lightgrey":"#D3D3D3","lightpink":"#FFB6C1","lightsalmon":"#FFA07A","lightseagreen":"#20B2AA","lightskyblue":"#87CEFA","lightslategray":"#778899","lightslategrey":"#778899","lightsteelblue":"#B0C4DE","lightyellow":"#FFFFE0","lime":"#00FF00","limegreen":"#32CD32","linen":"#FAF0E6","magenta":"#FF00FF","maroon":"#800000","mediumaquamarine":"#66CDAA","mediumblue":"#0000CD","mediumorchid":"#BA55D3","mediumpurple":"#9370DB","mediumseagreen":"#3CB371","mediumslateblue":"#7B68EE","mediumspringgreen":"#00FA9A","mediumturquoise":"#48D1CC","mediumvioletred":"#C71585","midnightblue":"#191970","mintcream":"#F5FFFA","mistyrose":"#FFE4E1","moccasin":"#FFE4B5","navajowhite":"#FFDEAD","navy":"#000080","oldlace":"#FDF5E6","olive":"#808000","olivedrab":"#6B8E23","orange":"#FFA500","orangered":"#FF4500","orchid":"#DA70D6","palegoldenrod":"#EEE8AA","palegreen":"#98FB98","paleturquoise":"#AFEEEE","palevioletred":"#DB7093","papayawhip":"#FFEFD5","peachpuff":"#FFDAB9","peru":"#CD853F","pink":"#FFC0CB","plum":"#DDA0DD","powderblue":"#B0E0E6","purple":"#800080","rebeccapurple":"#663399","red":"#FF0000","rosybrown":"#BC8F8F","royalblue":"#4169E1","saddlebrown":"#8B4513","salmon":"#FA8072","sandybrown":"#F4A460","seagreen":"#2E8B57","seashell":"#FFF5EE","sienna":"#A0522D","silver":"#C0C0C0","skyblue":"#87CEEB","slateblue":"#6A5ACD","slategray":"#708090","slategrey":"#708090","snow":"#FFFAFA","springgreen":"#00FF7F","steelblue":"#4682B4","tan":"#D2B48C","teal":"#008080","thistle":"#D8BFD8","tomato":"#FF6347","turquoise":"#40E0D0","violet":"#EE82EE","wheat":"#F5DEB3","white":"#FFFFFF","whitesmoke":"#F5F5F5","yellow":"#FFFF00","yellowgreen":"#9ACD32","coffee":"#6F4E37","cream":"#FFFDD0","charcoal":"#36454F","burgundy":"#800020","wine":"#722F37","rust":"#B7410E","mustard":"#FFDB58","amber":"#FFBF00","lemon":"#FFF44F","peach":"#FFE5B4","apricot":"#FBCEB1","blush":"#DE5D83","rose":"#FF007F","terracotta":"#E2725B","bronze":"#CD7F32","copper":"#B87333","caramel":"#AF6F09","mocha":"#967969","taupe":"#8B8589","sand":"#C2B280","camel":"#C19A6B","eggshell":"#F0EAD6","off white":"#FAF9F6","sage":"#9CAF88","emerald":"#50C878","jade":"#00A86B","moss":"#8A9A5B","seafoam":"#93E9BE","cobalt":"#0047AB","denim":"#1560BD","periwinkle":"#CCCCFF","lilac":"#C8A2C8","mauve":"#E0B0FF","graphite":"#41424C","slate":"#708090","espresso":"#4E312D","cinnamon":"#D2691E","clay":"#B66A50","ochre":"#CC7722","champagne":"#F7E7CE","vanilla":"#F3E5AB","butter":"#FFF1B5","bone":"#E3DAC9","porcelain":"#F5F3EF","ink":"#1F2933","midnight":"#191970","ocean":"#006994","cerulean":"#007BA7","petrol":"#005F6A","pine":"#01796F","fern":"#4F7942","olive drab":"#6B8E23","dusty rose":"#DCAE96","raspberry":"#E30B5D","cranberry":"#9F000F","brick":"#B22222","mahogany":"#C04000","walnut":"#773F1A","cocoa":"#875F42"};
+const PANTONE_DEMO={"PMS 286 C":"#0033A0","PMS 185 C":"#E4002B","PMS 354 C":"#00B140","PMS 123 C":"#FFC72C","PMS 1655 C":"#FF6A13","PMS 2597 C":"#7D3C98","PMS BLACK C":"#2D2926","PMS COOL GRAY 9 C":"#75787B"};
+const TOKENS_DEMO={"blue-500":"#3B82F6","gray-900":"#111827","teal-500":"#14B8A6","red-500":"#EF4444","green-500":"#22C55E","yellow-500":"#EAB308","slate-700":"#334155","stone-500":"#78716C","emerald-400":"#34D399","indigo-600":"#4F46E5","violet-500":"#8B5CF6","orange-500":"#F97316","rose-500":"#F43F5E"};
+
+const $=id=>document.getElementById(id);
+const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)));
+const fmt=(v,n=2)=>Number(v).toFixed(n);
+
+let currentMode="name";
+let currentHex="#008080";
+let currentFidelity=100;
+let currentExtraFlags=[];
+let challengeStart=null;
+let challengeTarget=null;
+let lastReportText="";
+let lastReportJson=null;
+let lastEvaluationId=null;
+let voiceTranscript="";
+let voiceConfidence=null;
+
+function normalizeName(text){
+  return (text||"").trim().toLowerCase().replace(/[_-]+/g," ").replace(/\s+/g," ");
+}
+function normalizedCompact(text){return normalizeName(text).replace(/\s+/g,"");}
+function prettyName(text){
+  return normalizeName(text).replace(/\b\w/g,c=>c.toUpperCase());
+}
+function exactNamedColor(text){
+  const n=normalizedCompact(text);
+  for(const [name,hex] of Object.entries(NAMED_COLORS)){
+    if(normalizedCompact(name)===n) return {name,hex};
+  }
+  return null;
+}
+function damerau(a,b){
+  a=normalizeName(a); b=normalizeName(b);
+  const da={};
+  const max=a.length+b.length;
+  const d=Array.from({length:a.length+2},()=>Array(b.length+2).fill(0));
+  d[0][0]=max;
+  for(let i=0;i<=a.length;i++){d[i+1][0]=max;d[i+1][1]=i;}
+  for(let j=0;j<=b.length;j++){d[0][j+1]=max;d[1][j+1]=j;}
+  for(let i=1;i<=a.length;i++){
+    let db=0;
+    for(let j=1;j<=b.length;j++){
+      const i1=da[b[j-1]]||0;
+      const j1=db;
+      let cost=1;
+      if(a[i-1]===b[j-1]){cost=0;db=j;}
+      d[i+1][j+1]=Math.min(
+        d[i][j]+cost,
+        d[i+1][j]+1,
+        d[i][j+1]+1,
+        d[i1][j1]+(i-i1-1)+1+(j-j1-1)
+      );
+    }
+    da[a[i-1]]=i;
+  }
+  return d[a.length+1][b.length+1];
+}
+function closestSpelling(text,obj){
+  const input=normalizeName(text);
+  let best=null,score=-1;
+  for(const [name,hex] of Object.entries(obj)){
+    const candidate=normalizeName(name);
+    const distance=damerau(input,candidate);
+    const similarity=Math.max(0,1-distance/Math.max(input.length||1,candidate.length||1));
+    if(similarity>score){score=similarity;best={name,hex,score:similarity,distance};}
+  }
+  return best;
+}
+function hexToRgb(hex){
+  hex=(hex||"").trim().replace("#","");
+  if(hex.length===3) hex=hex.split("").map(c=>c+c).join("");
+  if(!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+  return [parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];
+}
+function rgbToHex(r,g,b){
+  return "#"+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,"0")).join("").toUpperCase();
+}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h=0,s=0,l=(max+min)/2;
+  if(max!==min){
+    const d=max-min;
+    s=l>.5?d/(2-max-min):d/(max+min);
+    if(max===r) h=(g-b)/d+(g<b?6:0);
+    else if(max===g) h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h*=60;
+  }
+  return [h,s*100,l*100];
+}
+function hslToRgb(h,s,l){
+  h=((Number(h)%360)+360)%360;s=clamp(s,0,100)/100;l=clamp(l,0,100)/100;
+  const c=(1-Math.abs(2*l-1))*s;
+  const x=c*(1-Math.abs((h/60)%2-1));
+  const m=l-c/2;
+  let rgb;
+  if(h<60) rgb=[c,x,0];
+  else if(h<120) rgb=[x,c,0];
+  else if(h<180) rgb=[0,c,x];
+  else if(h<240) rgb=[0,x,c];
+  else if(h<300) rgb=[x,0,c];
+  else rgb=[c,0,x];
+  return rgb.map(v=>(v+m)*255);
+}
+function rgbToHsv(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+  let h=0;
+  const s=max===0?0:d/max;
+  if(d!==0){
+    if(max===r) h=((g-b)/d+(g<b?6:0))*60;
+    else if(max===g) h=((b-r)/d+2)*60;
+    else h=((r-g)/d+4)*60;
+  }
+  return [h,s*100,max*100];
+}
+function hsvToRgb(h,s,v){
+  h=((Number(h)%360)+360)%360;s=clamp(s,0,100)/100;v=clamp(v,0,100)/100;
+  const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;
+  let rgb;
+  if(h<60) rgb=[c,x,0];
+  else if(h<120) rgb=[x,c,0];
+  else if(h<180) rgb=[0,c,x];
+  else if(h<240) rgb=[0,x,c];
+  else if(h<300) rgb=[x,0,c];
+  else rgb=[c,0,x];
+  return rgb.map(q=>(q+m)*255);
+}
+function rgbToCmyk(r,g,b){
+  r/=255;g/=255;b/=255;
+  const k=1-Math.max(r,g,b);
+  if(k>=.999999) return [0,0,0,100];
+  return [
+    (1-r-k)/(1-k)*100,
+    (1-g-k)/(1-k)*100,
+    (1-b-k)/(1-k)*100,
+    k*100
+  ];
+}
+function cmykToRgb(c,m,y,k){
+  c=clamp(c,0,100)/100;m=clamp(m,0,100)/100;y=clamp(y,0,100)/100;k=clamp(k,0,100)/100;
+  return [255*(1-c)*(1-k),255*(1-m)*(1-k),255*(1-y)*(1-k)];
+}
+function srgbToLinear(v){
+  v/=255;
+  return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4);
+}
+function linearToSrgbRaw(v){
+  const q=v<=.0031308?12.92*v:1.055*Math.pow(Math.max(v,0),1/2.4)-.055;
+  return q*255;
+}
+function rgbToXyz(r,g,b){
+  r=srgbToLinear(r);g=srgbToLinear(g);b=srgbToLinear(b);
+  return [
+    (r*.4124564+g*.3575761+b*.1804375)*100,
+    (r*.2126729+g*.7151522+b*.0721750)*100,
+    (r*.0193339+g*.1191920+b*.9503041)*100
+  ];
+}
+function xyzToRgbDetailed(x,y,z){
+  x/=100;y/=100;z/=100;
+  const lr=x*3.2404542+y*-1.5371385+z*-0.4985314;
+  const lg=x*-0.9692660+y*1.8760108+z*.0415560;
+  const lb=x*.0556434+y*-0.2040259+z*1.0572252;
+  const raw=[linearToSrgbRaw(lr),linearToSrgbRaw(lg),linearToSrgbRaw(lb)];
+  const clipped=raw.some(v=>v<0||v>255||!Number.isFinite(v));
+  return {raw,rgb:raw.map(v=>clamp(Number.isFinite(v)?v:0,0,255)),clipped};
+}
+function xyzToLab(x,y,z){
+  const xr=x/95.047,yr=y/100,zr=z/108.883;
+  const f=t=>t>.008856?Math.cbrt(t):(7.787*t+16/116);
+  const fx=f(xr),fy=f(yr),fz=f(zr);
+  return [116*fy-16,500*(fx-fy),200*(fy-fz)];
+}
+function labToXyz(L,a,b){
+  const fy=(L+16)/116,fx=a/500+fy,fz=fy-b/200;
+  const inv=t=>{const t3=t*t*t;return t3>.008856?t3:(t-16/116)/7.787;};
+  return [95.047*inv(fx),100*inv(fy),108.883*inv(fz)];
+}
+function rgbToLab(r,g,b){return xyzToLab(...rgbToXyz(r,g,b));}
+function labToLch(L,a,b){
+  return [L,Math.sqrt(a*a+b*b),(Math.atan2(b,a)*180/Math.PI+360)%360];
+}
+function lchToLab(L,C,H){
+  const hr=((Number(H)%360)+360)%360*Math.PI/180;
+  return [Number(L),Number(C)*Math.cos(hr),Number(C)*Math.sin(hr)];
+}
+function rgbToYcbcr(r,g,b){
+  // BT.601 full-range 8-bit YCbCr; clamp the theoretical endpoints to 0–255.
+  return [
+    .299*r+.587*g+.114*b,
+    128-.168736*r-.331264*g+.5*b,
+    128+.5*r-.418688*g-.081312*b
+  ].map(v=>clamp(v,0,255));
+}
+function ycbcrToRgb(y,cb,cr){
+  return [
+    y+1.402*(cr-128),
+    y-.344136*(cb-128)-.714136*(cr-128),
+    y+1.772*(cb-128)
+  ].map(v=>clamp(v,0,255));
+}
+function rgbToYuv(r,g,b){
+  r/=255;g/=255;b/=255;
+  return [
+    .299*r+.587*g+.114*b,
+    -.14713*r-.28886*g+.436*b,
+    .615*r-.51499*g-.10001*b
+  ];
+}
+function yuvToRgb(y,u,v){
+  const r=y+1.13983*v;
+  const g=y-.39465*u-.58060*v;
+  const b=y+2.03211*u;
+  return [r,g,b].map(q=>clamp(q*255,0,255));
+}
+function deltaE00(lab1,lab2){
+  const [L1,a1,b1]=lab1,[L2,a2,b2]=lab2;
+  const avgLp=(L1+L2)/2;
+  const C1=Math.sqrt(a1*a1+b1*b1),C2=Math.sqrt(a2*a2+b2*b2);
+  const avgC=(C1+C2)/2;
+  const G=.5*(1-Math.sqrt(Math.pow(avgC,7)/(Math.pow(avgC,7)+Math.pow(25,7))));
+  const a1p=(1+G)*a1,a2p=(1+G)*a2;
+  const C1p=Math.sqrt(a1p*a1p+b1*b1),C2p=Math.sqrt(a2p*a2p+b2*b2);
+  const hp=(a,b)=>{if(a===0&&b===0)return 0;const h=Math.atan2(b,a)*180/Math.PI;return h>=0?h:h+360;};
+  const h1p=hp(a1p,b1),h2p=hp(a2p,b2);
+  const dLp=L2-L1,dCp=C2p-C1p;
+  let dhp;
+  if(C1p*C2p===0) dhp=0;
+  else if(Math.abs(h2p-h1p)<=180) dhp=h2p-h1p;
+  else if(h2p<=h1p) dhp=h2p-h1p+360;
+  else dhp=h2p-h1p-360;
+  const dHp=2*Math.sqrt(C1p*C2p)*Math.sin(dhp*Math.PI/360);
+  const avgL=(L1+L2)/2,avgCp=(C1p+C2p)/2;
+  let avghp;
+  if(C1p*C2p===0) avghp=h1p+h2p;
+  else if(Math.abs(h1p-h2p)<=180) avghp=(h1p+h2p)/2;
+  else if(h1p+h2p<360) avghp=(h1p+h2p+360)/2;
+  else avghp=(h1p+h2p-360)/2;
+  const T=1-.17*Math.cos((avghp-30)*Math.PI/180)+.24*Math.cos(2*avghp*Math.PI/180)
+    +.32*Math.cos((3*avghp+6)*Math.PI/180)-.20*Math.cos((4*avghp-63)*Math.PI/180);
+  const dTheta=30*Math.exp(-Math.pow((avghp-275)/25,2));
+  const Rc=2*Math.sqrt(Math.pow(avgCp,7)/(Math.pow(avgCp,7)+Math.pow(25,7)));
+  const Sl=1+.015*Math.pow(avgL-50,2)/Math.sqrt(20+Math.pow(avgL-50,2));
+  const Sc=1+.045*avgCp;
+  const Sh=1+.015*avgCp*T;
+  const Rt=-Math.sin(2*dTheta*Math.PI/180)*Rc;
+  return Math.sqrt(
+    Math.pow(dLp/Sl,2)+Math.pow(dCp/Sc,2)+Math.pow(dHp/Sh,2)
+    +Rt*(dCp/Sc)*(dHp/Sh)
+  );
+}
+const nameLabCache=new Map();
+function labForHex(hex){
+  if(!nameLabCache.has(hex)) nameLabCache.set(hex,rgbToLab(...hexToRgb(hex)));
+  return nameLabCache.get(hex);
+}
+function nearestByDE(hex,obj){
+  const target=labForHex(hex);
+  let best=null,bestD=Infinity;
+  for(const [name,h] of Object.entries(obj)){
+    const d=deltaE00(target,labForHex(h));
+    if(d<bestD){bestD=d;best={name,hex:h,d};}
+  }
+  return best;
+}
+function luminance(rgb){
+  const c=rgb.map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});
+  return .2126*c[0]+.7152*c[1]+.0722*c[2];
+}
+function contrastRatio(a,b){
+  const L1=luminance(a),L2=luminance(b);
+  return (Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05);
+}
+function wavelengthToRgb(nm){
+  nm=Number(nm);
+  if(nm<380||nm>700) return null;
+  let r=0,g=0,b=0;
+  if(nm<440){r=-(nm-440)/60;b=1;}
+  else if(nm<490){g=(nm-440)/50;b=1;}
+  else if(nm<510){g=1;b=-(nm-510)/20;}
+  else if(nm<580){r=(nm-510)/70;g=1;}
+  else if(nm<645){r=1;g=-(nm-645)/65;}
+  else{r=1;}
+  let factor=1;
+  if(nm<420) factor=.3+.7*(nm-380)/40;
+  else if(nm>645) factor=.3+.7*(700-nm)/55;
+  const gamma=.8;
+  return [r,g,b].map(v=>Math.round(255*Math.pow(Math.max(0,v*factor),gamma)));
+}
+function nearestSpectral(hex){
+  const target=labForHex(hex);
+  let best={nm:null,d:Infinity,hex:null};
+  for(let nm=380;nm<=700;nm++){
+    const h=rgbToHex(...wavelengthToRgb(nm));
+    const d=deltaE00(target,labForHex(h));
+    if(d<best.d) best={nm,d,hex:h};
+  }
+  // Only claim a single wavelength when reasonably close to the generated spectral locus.
+  return best;
+}
+function parseReference(text){
+  text=(text||"").trim();
+  if(!text) return null;
+  const rgb=hexToRgb(text);
+  if(rgb){
+    const hex=rgbToHex(...rgb);
+    const near=nearestByDE(hex,NAMED_COLORS);
+    return {name:near.name,hex};
+  }
+  const exact=exactNamedColor(text);
+  if(exact) return {name:exact.name,hex:exact.hex};
+  const best=closestSpelling(text,NAMED_COLORS);
+  if(best && best.score>=.78) return {name:best.name,hex:best.hex,approx:true};
+  return null;
+}
+function setMode(mode){
+  currentMode=mode;
+  document.querySelectorAll(".mode").forEach(btn=>btn.classList.toggle("active",btn.dataset.mode===mode));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.add("hidden"));
+  $("panel-"+mode).classList.remove("hidden");
+}
+document.querySelectorAll(".mode").forEach(btn=>btn.addEventListener("click",()=>setMode(btn.dataset.mode)));
+
+function videoPanelSync(){
+  const isYcc=$("videoModel").value==="ycbcr";
+  $("video-ycbcr").classList.toggle("hidden",!isYcc);
+  $("video-yuv").classList.toggle("hidden",isYcc);
+}
+$("videoModel").addEventListener("change",videoPanelSync);
+
+function showBaseColor(hex,displayName){
+  currentHex=hex.toUpperCase();
+  const rgb=hexToRgb(currentHex);
+  const near=nearestByDE(currentHex,NAMED_COLORS);
+  $("swatch").style.background=currentHex;
+  $("resultName").textContent=prettyName(displayName||near.name);
+  $("resultHex").textContent=currentHex;
+  $("resultRgb").textContent=rgb.map(Math.round).join(", ");
+  $("nearestName").textContent=prettyName(near.name);
+  const black=contrastRatio(rgb,[0,0,0]),white=contrastRatio(rgb,[255,255,255]);
+  $("contrastText").textContent=(black>=white?"Dark":"Light")+" text ("+Math.max(black,white).toFixed(2)+":1)";
+  renderConversions(currentHex);
+}
+function renderConversions(hex){
+  const rgb=hexToRgb(hex);
+  const hsl=rgbToHsl(...rgb),hsv=rgbToHsv(...rgb),cmyk=rgbToCmyk(...rgb);
+  const xyz=rgbToXyz(...rgb),lab=xyzToLab(...xyz),lch=labToLch(...lab);
+  const ycc=rgbToYcbcr(...rgb),yuv=rgbToYuv(...rgb);
+  const p=nearestByDE(hex,PANTONE_DEMO),t=nearestByDE(hex,TOKENS_DEMO);
+  const spectral=nearestSpectral(hex);
+
+  $("outHsl").textContent=`hsl(${fmt(hsl[0],1)}°, ${fmt(hsl[1],1)}%, ${fmt(hsl[2],1)}%)`;
+  $("outHsv").textContent=`hsv(${fmt(hsv[0],1)}°, ${fmt(hsv[1],1)}%, ${fmt(hsv[2],1)}%)`;
+  $("outCmyk").textContent=`C:${fmt(cmyk[0],1)} M:${fmt(cmyk[1],1)} Y:${fmt(cmyk[2],1)} K:${fmt(cmyk[3],1)} · generic`;
+  $("outLab").textContent=`L* ${fmt(lab[0],2)} · a* ${fmt(lab[1],2)} · b* ${fmt(lab[2],2)}`;
+  $("outLch").textContent=`L* ${fmt(lch[0],2)} · C ${fmt(lch[1],2)} · h ${fmt(lch[2],2)}°`;
+  $("outXyz").textContent=`X ${fmt(xyz[0],2)} · Y ${fmt(xyz[1],2)} · Z ${fmt(xyz[2],2)}`;
+  $("outYcc").textContent=`Y ${fmt(ycc[0],2)} · Cb ${fmt(ycc[1],2)} · Cr ${fmt(ycc[2],2)}`;
+  $("outYuv").textContent=`Y ${fmt(yuv[0],4)} · U ${fmt(yuv[1],4)} · V ${fmt(yuv[2],4)}`;
+  $("outPantone").textContent=`Nearest demo ref: ${p.name} (${p.hex}) · ΔE00 ${p.d.toFixed(2)}`;
+  $("outToken").textContent=`Nearest demo token: ${t.name} (${t.hex}) · ΔE00 ${t.d.toFixed(2)}`;
+  $("outWave").textContent=spectral.d<=8
+    ? `${spectral.nm} nm approx. · spectral ΔE00 ${spectral.d.toFixed(2)}`
+    : `No reliable single wavelength · nearest spectral ΔE00 ${spectral.d.toFixed(2)}`;
+}
+function manualFlags(){return [...document.querySelectorAll(".manual-flag:checked")].map(x=>x.value);}
+function automaticFlags(meta){
+  const flags=[...currentExtraFlags];
+  if(meta.confidence<80) flags.push("Recognition confidence below 80%");
+  if(meta.approxSpelling) flags.push("Name was corrected from an approximate spelling");
+  if(meta.method==="CMYK") flags.push("Generic CMYK is not ICC/profile-managed");
+  if(meta.method==="Spot-color reference") flags.push("Spot-color mapping uses a small non-authoritative demo subset");
+  if(meta.method==="Design token") flags.push("Design-token values are demo references and may vary by system/version");
+  if(meta.method==="Wavelength") flags.push("Spectral wavelength to sRGB is an approximation");
+  if(meta.method==="Voice") flags.push("Speech recognition depends on browser implementation");
+  if(meta.method==="Image sample") flags.push("Image sampling depends on browser color-profile handling");
+  if(meta.time!==null && meta.time>5) flags.push("Response time exceeded 5 seconds");
+  return [...new Set(flags)];
+}
+function renderFlags(flags){
+  $("qualityFlagList").innerHTML="";
+  if(!flags.length){
+    $("qualityFlagList").innerHTML='<span class="flag-chip good">No major quality concerns detected</span>';
+    $("flagCount").textContent="0 concerns";
+    return;
+  }
+  flags.forEach(text=>{
+    const span=document.createElement("span");
+    span.className="flag-chip warn";
+    span.textContent=text;
+    $("qualityFlagList").appendChild(span);
+  });
+  $("flagCount").textContent=flags.length+" concern"+(flags.length===1?"":"s");
+}
+function makeId(){
+  const d=new Date();
+  return "CLR-"+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"-"+
+    String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+String(d.getSeconds()).padStart(2,"0");
+}
+function renderEvaluation(meta){
+  const reference=parseReference($("targetColor").value);
+  let refAccuracy=null,refDE=null;
+  if(reference){
+    refDE=deltaE00(labForHex(meta.hex),labForHex(reference.hex));
+    refAccuracy=Math.max(0,Math.round(100-refDE*5));
+    $("referenceResult").textContent=`Reference: ${prettyName(reference.name)} ${reference.hex} · ΔE00 ${refDE.toFixed(2)} · accuracy ${refAccuracy}/100`;
+  }else{
+    $("referenceResult").textContent=$("targetColor").value.trim()
+      ?"Reference target not recognized. Use a supported name or HEX."
+      :"No reference target set.";
+  }
+
+  const flags=[...automaticFlags(meta),...manualFlags()];
+  const penalty=Math.min(20,flags.length*2);
+
+  const base=reference
+    ? refAccuracy*.45+meta.validity*.20+meta.fidelity*.20+meta.confidence*.15
+    : meta.validity*.35+meta.fidelity*.35+meta.confidence*.30;
+  const speedPenalty=meta.time===null?0:Math.max(0,Math.min(15,(meta.time-1)*2.5));
+  const overall=Math.round(clamp(base-penalty-speedPenalty,0,100));
+
+  const grade=
+    overall>=95?"Outstanding":
+    overall>=90?"Excellent":
+    overall>=80?"Very good":
+    overall>=70?"Good":
+    overall>=60?"Fair":"Needs review";
+
+  const near=nearestByDE(meta.hex,NAMED_COLORS);
+  $("evaluationScore").textContent=overall;
+  $("evaluationGrade").textContent=grade;
+  $("confidenceText").textContent=Math.round(meta.confidence)+"%";
+  $("validityScore").textContent=Math.round(meta.validity)+"/100";
+  $("fidelityScore").textContent=Math.round(meta.fidelity)+"/100";
+  $("accuracyScore").textContent=reference?refAccuracy+"/100":"Not supplied";
+  $("distanceScore").textContent=near.d.toFixed(2);
+  $("timeScore").textContent=meta.time===null?"Not timed":meta.time.toFixed(2)+" sec";
+  $("confidenceBar").style.width=Math.round(meta.confidence)+"%";
+  renderFlags(flags);
+
+  const rgb=hexToRgb(meta.hex);
+  const black=contrastRatio(rgb,[0,0,0]).toFixed(2);
+  const white=contrastRatio(rgb,[255,255,255]).toFixed(2);
+  const id=makeId(),timestamp=new Date().toLocaleString();
+  lastEvaluationId=id;
+
+  const data={
+    id,timestamp,inputMethod:meta.method,inputValue:meta.inputValue,
+    recognizedName:$("resultName").textContent,hex:meta.hex,rgb:rgb.map(Math.round),
+    overallScore:overall,grade,
+    recognitionConfidence:Math.round(meta.confidence),
+    inputValidity:Math.round(meta.validity),
+    conversionFidelity:Math.round(meta.fidelity),
+    nearestNamedColor:near.name,nearestNameDeltaE00:Number(near.d.toFixed(3)),
+    responseTimeSeconds:meta.time===null?null:Number(meta.time.toFixed(3)),
+    reference:reference?{name:reference.name,hex:reference.hex,deltaE00:Number(refDE.toFixed(3)),accuracy:refAccuracy}:null,
+    qualityFlags:flags,
+    accessibility:{contrastVsBlack:Number(black),contrastVsWhite:Number(white),preferredText:Number(black)>=Number(white)?"dark":"light"},
+    conversions:{
+      hsl:$("outHsl").textContent,hsv:$("outHsv").textContent,cmyk:$("outCmyk").textContent,
+      lab:$("outLab").textContent,lch:$("outLch").textContent,xyz:$("outXyz").textContent,
+      ycbcr:$("outYcc").textContent,yuv:$("outYuv").textContent,
+      spotReference:$("outPantone").textContent,designToken:$("outToken").textContent,wavelength:$("outWave").textContent
+    },
+    notes:$("evaluatorNotes").value.trim()
+  };
+
+  const text=[
+    "MULTIMODAL COLOR INTELLIGENCE EVALUATION",
+    "==========================================",
+    `Evaluation ID: ${id}`,
+    `Timestamp: ${timestamp}`,
+    "",
+    "INPUT",
+    `Method: ${meta.method}`,
+    `Value: ${meta.inputValue}`,
+    "",
+    "RECOGNIZED RESULT",
+    `Name: ${data.recognizedName}`,
+    `HEX: ${meta.hex}`,
+    `RGB: ${data.rgb.join(", ")}`,
+    `Nearest named color: ${prettyName(near.name)}`,
+    `Nearest-name ΔE00: ${near.d.toFixed(2)}`,
+    "",
+    "EVALUATION",
+    `Overall score: ${overall}/100`,
+    `Grade: ${grade}`,
+    `Recognition confidence: ${Math.round(meta.confidence)}%`,
+    `Input validity: ${Math.round(meta.validity)}/100`,
+    `Conversion fidelity: ${Math.round(meta.fidelity)}/100`,
+    `Reference accuracy: ${reference?refAccuracy+"/100":"Not supplied"}`,
+    `Response time: ${meta.time===null?"Not timed":meta.time.toFixed(2)+" sec"}`,
+    "",
+    "REFERENCE COMPARISON",
+    reference?`Reference: ${prettyName(reference.name)} (${reference.hex}) · ΔE00 ${refDE.toFixed(2)}`:"No reference supplied.",
+    "",
+    "QUALITY FLAGS",
+    ...(flags.length?flags.map(f=>"- "+f):["- None"]),
+    "",
+    "ACCESSIBILITY",
+    `Contrast vs black: ${black}:1`,
+    `Contrast vs white: ${white}:1`,
+    `Preferred text: ${Number(black)>=Number(white)?"dark":"light"}`,
+    "",
+    "COLOR CONVERSIONS",
+    `HSL: ${data.conversions.hsl}`,
+    `HSV / HSB: ${data.conversions.hsv}`,
+    `CMYK: ${data.conversions.cmyk}`,
+    `CIELAB: ${data.conversions.lab}`,
+    `LCH: ${data.conversions.lch}`,
+    `CIE XYZ: ${data.conversions.xyz}`,
+    `YCbCr: ${data.conversions.ycbcr}`,
+    `YUV: ${data.conversions.yuv}`,
+    `Spot-color reference: ${data.conversions.spotReference}`,
+    `Design token: ${data.conversions.designToken}`,
+    `Wavelength: ${data.conversions.wavelength}`,
+    "",
+    "EVALUATOR NOTES",
+    data.notes||"No additional notes.",
+    "",
+    "ACCURACY / LIMITATIONS",
+    "CIEDE2000 is used for perceptual color differences. sRGB/XYZ/LAB conversions use D65. Generic CMYK is not ICC-managed. Spot-color and design-token libraries are demonstrative subsets. Wavelength values are approximate and only meaningful for spectral colors. Browser speech and image color-profile behavior may vary."
+  ].join("\n");
+
+  lastReportText=text;lastReportJson=data;
+  $("structuredReport").textContent=text;
+  $("reportTimestamp").textContent=timestamp;
+}
+function failEvaluation(message,inputValue){
+  $("evaluationScore").textContent="—";
+  $("evaluationGrade").textContent="Unrecognized";
+  $("confidenceText").textContent="0%";
+  $("validityScore").textContent="0/100";
+  $("fidelityScore").textContent="—";
+  $("accuracyScore").textContent="Not supplied";
+  $("distanceScore").textContent="—";
+  $("confidenceBar").style.width="0%";
+  renderFlags([message]);
+  lastReportText=`COLOR INPUT NOT RECOGNIZED\n==========================\nInput: ${inputValue||"(empty)"}\n\n${message}\n\nNo unrelated color was guessed.`;
+  lastReportJson={recognized:false,input:inputValue,message};
+  $("structuredReport").textContent=lastReportText;
+  $("reportTimestamp").textContent=new Date().toLocaleString();
+}
+function evaluateColor(){
+  currentExtraFlags=[];
+  currentFidelity=100;
+  let rgb=null,hex=null,name=null,confidence=100,validity=100,fidelity=100,time=null,inputValue="",method="",approxSpelling=false;
+
+  try{
+    if(currentMode==="name"){
+      inputValue=$("colorName").value.trim();method="Name / spelling";
+      if(!inputValue) return failEvaluation("Enter a color name.",inputValue);
+      const exact=exactNamedColor(inputValue);
+      if(exact){name=exact.name;hex=exact.hex;rgb=hexToRgb(hex);}
+      else{
+        const best=closestSpelling(inputValue,NAMED_COLORS);
+        const threshold=normalizeName(inputValue).length<=4?.82:.74;
+        if(!best||best.score<threshold) return failEvaluation("No reliable named-color or spelling match was found.",inputValue);
+        name=best.name;hex=best.hex;rgb=hexToRgb(hex);
+        confidence=Math.round(65+best.score*35);validity=Math.round(70+best.score*30);approxSpelling=true;
+      }
+    }
+    else if(currentMode==="hex"){
+      inputValue=$("hexInput").value.trim();method="HEX";
+      rgb=hexToRgb(inputValue);
+      if(!rgb) return failEvaluation("Invalid HEX value. Use #RGB or #RRGGBB.",inputValue);
+      hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+    }
+    else if(currentMode==="rgb"){
+      inputValue=[$("rInput").value,$("gInput").value,$("bInput").value].join(", ");
+      method="RGB";
+      const v=[$("rInput").value,$("gInput").value,$("bInput").value].map(Number);
+      if(v.some(x=>!Number.isFinite(x)||x<0||x>255)) return failEvaluation("RGB channels must each be between 0 and 255.",inputValue);
+      rgb=v;hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+    }
+    else if(currentMode==="hsl"){
+      const h=Number($("hslH").value),s=Number($("hslS").value),l=Number($("hslL").value);
+      inputValue=`${h}, ${s}%, ${l}%`;method="HSL";
+      if(![h,s,l].every(Number.isFinite)||s<0||s>100||l<0||l>100) return failEvaluation("HSL requires a numeric hue and saturation/lightness from 0–100%.",inputValue);
+      rgb=hslToRgb(h,s,l);hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+    }
+    else if(currentMode==="hsv"){
+      const h=Number($("hsvH").value),s=Number($("hsvS").value),v=Number($("hsvV").value);
+      inputValue=`${h}, ${s}%, ${v}%`;method="HSV / HSB";
+      if(![h,s,v].every(Number.isFinite)||s<0||s>100||v<0||v>100) return failEvaluation("HSV requires a numeric hue and saturation/value from 0–100%.",inputValue);
+      rgb=hsvToRgb(h,s,v);hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+    }
+    else if(currentMode==="cmyk"){
+      const v=[$("cInput").value,$("mInput").value,$("yInput").value,$("kInput").value].map(Number);
+      inputValue=v.join(", ")+"%";method="CMYK";
+      if(v.some(x=>!Number.isFinite(x)||x<0||x>100)) return failEvaluation("CMYK components must be 0–100%.",inputValue);
+      rgb=cmykToRgb(...v);hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+      fidelity=90;
+    }
+    else if(currentMode==="lab"){
+      const L=Number($("labL").value),a=Number($("labA").value),b=Number($("labB").value);
+      inputValue=`L* ${L}, a* ${a}, b* ${b}`;method="CIELAB";
+      if(![L,a,b].every(Number.isFinite)||L<0||L>100) return failEvaluation("CIELAB requires L* from 0–100 and numeric a*/b* values.",inputValue);
+      const out=xyzToRgbDetailed(...labToXyz(L,a,b));rgb=out.rgb;hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+      if(out.clipped){fidelity=82;currentExtraFlags.push("CIELAB color falls outside displayable sRGB and was clipped");}
+    }
+    else if(currentMode==="lch"){
+      const L=Number($("lchL").value),C=Number($("lchC").value),H=Number($("lchH").value);
+      inputValue=`L* ${L}, C ${C}, h ${H}°`;method="LCH";
+      if(![L,C,H].every(Number.isFinite)||L<0||L>100||C<0) return failEvaluation("LCH requires L* 0–100, non-negative chroma, and numeric hue.",inputValue);
+      const out=xyzToRgbDetailed(...labToXyz(...lchToLab(L,C,H)));rgb=out.rgb;hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+      if(out.clipped){fidelity=82;currentExtraFlags.push("LCH color falls outside displayable sRGB and was clipped");}
+    }
+    else if(currentMode==="xyz"){
+      const X=Number($("xyzX").value),Y=Number($("xyzY").value),Z=Number($("xyzZ").value);
+      inputValue=`X ${X}, Y ${Y}, Z ${Z}`;method="CIE XYZ";
+      if(![X,Y,Z].every(Number.isFinite)) return failEvaluation("CIE XYZ requires three numeric values.",inputValue);
+      const out=xyzToRgbDetailed(X,Y,Z);rgb=out.rgb;hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;
+      if(out.clipped){fidelity=82;currentExtraFlags.push("XYZ color falls outside displayable sRGB and was clipped");}
+    }
+    else if(currentMode==="video"){
+      if($("videoModel").value==="ycbcr"){
+        const Y=Number($("yccY").value),Cb=Number($("yccCb").value),Cr=Number($("yccCr").value);
+        inputValue=`Y ${Y}, Cb ${Cb}, Cr ${Cr}`;method="YCbCr (BT.601)";
+        if(![Y,Cb,Cr].every(Number.isFinite)||[Y,Cb,Cr].some(x=>x<0||x>255)) return failEvaluation("BT.601 full-range YCbCr values must be 0–255.",inputValue);
+        rgb=ycbcrToRgb(Y,Cb,Cr);
+      }else{
+        const Y=Number($("yuvY").value),U=Number($("yuvU").value),V=Number($("yuvV").value);
+        inputValue=`Y ${Y}, U ${U}, V ${V}`;method="YUV";
+        if(![Y,U,V].every(Number.isFinite)||Y<0||Y>1||U<-.436||U>.436||V<-.615||V>.615) return failEvaluation("YUV expects Y 0–1, U about -0.436…0.436, and V about -0.615…0.615.",inputValue);
+        rgb=yuvToRgb(Y,U,V);
+      }
+      hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;fidelity=97;
+    }
+    else if(currentMode==="pantone"){
+      inputValue=$("pantoneInput").value.trim().toUpperCase();method="Spot-color reference";
+      const key=Object.keys(PANTONE_DEMO).find(k=>k.toUpperCase()===inputValue);
+      if(!key) return failEvaluation("That spot-color code is not in this small demonstration reference subset; the evaluator will not guess a different code.",inputValue);
+      hex=PANTONE_DEMO[key];rgb=hexToRgb(hex);name=nearestByDE(hex,NAMED_COLORS).name;confidence=95;validity=92;fidelity=84;
+    }
+    else if(currentMode==="token"){
+      inputValue=$("tokenInput").value.trim().toLowerCase();method="Design token";
+      let key=Object.keys(TOKENS_DEMO).find(k=>k.toLowerCase()===inputValue);
+      if(!key){
+        const best=closestSpelling(inputValue,TOKENS_DEMO);
+        if(!best||best.score<.82) return failEvaluation("That token is not in the demonstration token set.",inputValue);
+        key=best.name;confidence=Math.round(70+best.score*25);validity=88;approxSpelling=true;
+      }
+      hex=TOKENS_DEMO[key];rgb=hexToRgb(hex);name=key;fidelity=94;
+    }
+    else if(currentMode==="wavelength"){
+      const nm=Number($("waveInput").value);inputValue=String(nm)+" nm";method="Wavelength";
+      rgb=wavelengthToRgb(nm);
+      if(!rgb) return failEvaluation("Visible-light wavelength must be between 380 and 700 nm.",inputValue);
+      hex=rgbToHex(...rgb);name=nearestByDE(hex,NAMED_COLORS).name;confidence=88;validity=95;fidelity=82;
+    }
+    else if(currentMode==="voice"){
+      inputValue=voiceTranscript;method="Voice";
+      if(!inputValue) return failEvaluation("Use Start listening and say a color name first.",inputValue);
+      const exact=exactNamedColor(inputValue);
+      if(exact){name=exact.name;hex=exact.hex;rgb=hexToRgb(hex);confidence=voiceConfidence!==null?Math.round(75+voiceConfidence*25):92;}
+      else{
+        const best=closestSpelling(inputValue,NAMED_COLORS);
+        if(!best||best.score<.74) return failEvaluation("Speech was captured, but no reliable color-name match was found.",inputValue);
+        name=best.name;hex=best.hex;rgb=hexToRgb(hex);confidence=Math.round((voiceConfidence!==null?voiceConfidence*40:30)+best.score*55);approxSpelling=true;
+      }
+      validity=88;fidelity=95;
+    }
+    else if(currentMode==="image"){
+      inputValue=currentHex;method="Image sample";
+      rgb=hexToRgb(currentHex);hex=currentHex;name=nearestByDE(hex,NAMED_COLORS).name;
+      confidence=95;validity=94;fidelity=92;
+    }
+    else if(currentMode==="challenge"){
+      inputValue=$("challengeAnswer").value.trim();method="Timed challenge";
+      if(!challengeTarget||!challengeStart) return failEvaluation("Start the timed challenge before submitting an answer.",inputValue);
+      if(!inputValue) return failEvaluation("Type a color name for the challenge.",inputValue);
+      time=(performance.now()-challengeStart)/1000;
+      const target=challengeTarget;
+      const exact=exactNamedColor(inputValue);
+      let matchScore=0;
+      if(exact&&normalizedCompact(exact.name)===normalizedCompact(target.name)) matchScore=1;
+      else{
+        const d=damerau(inputValue,target.name);
+        matchScore=Math.max(0,1-d/Math.max(normalizeName(inputValue).length,normalizeName(target.name).length));
+      }
+      hex=target.hex;rgb=hexToRgb(hex);name=target.name;
+      confidence=Math.round(matchScore*100);validity=Math.round(70+matchScore*30);fidelity=100;
+      if(matchScore<.75) currentExtraFlags.push("Timed challenge answer did not closely match the target name");
+    }
+
+    showBaseColor(hex,name);
+    renderEvaluation({hex,method,inputValue,confidence,validity,fidelity,time,approxSpelling});
+  }catch(err){
+    console.error(err);
+    failEvaluation("The evaluator encountered an unexpected input error. Check the values and try again.",inputValue);
+  }
+}
+
+const enterIds=[
+  "colorName","hexInput","rInput","gInput","bInput","hslH","hslS","hslL","hsvH","hsvS","hsvV",
+  "cInput","mInput","yInput","kInput","labL","labA","labB","lchL","lchC","lchH",
+  "xyzX","xyzY","xyzZ","yccY","yccCb","yccCr","yuvY","yuvU","yuvV",
+  "pantoneInput","tokenInput","waveInput","challengeAnswer","targetColor"
+];
+enterIds.forEach(id=>{
+  const el=$(id);
+  if(el) el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();evaluateColor();}});
+});
+$("colorName").addEventListener("input",()=>{
+  if(currentMode!=="name") return;
+  const exact=exactNamedColor($("colorName").value);
+  if(exact) showBaseColor(exact.hex,exact.name);
+});
+
+$("evaluateBtn").onclick=evaluateColor;
+$("resetBtn").onclick=()=>location.reload();
+$("loadExampleBtn").onclick=()=>{
+  setMode("name");
+  $("colorName").value="coffee";
+  $("targetColor").value="#6F4E37";
+  $("evaluatorNotes").value="Showcase example: exact everyday color-name recognition with reference comparison.";
+  evaluateColor();
+};
+$("speakBtn").onclick=()=>{
+  if(!("speechSynthesis" in window)) return alert("Text-to-speech is not available in this browser.");
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance($("resultName").textContent));
+};
+$("startChallengeBtn").onclick=()=>{
+  const challengePool=["red","yellow","blue","green","orange","purple","pink","coffee","cream","teal","turquoise","sage","cobalt","burgundy"];
+  const key=challengePool[Math.floor(Math.random()*challengePool.length)];
+  const exact=exactNamedColor(key);
+  challengeTarget={name:key,hex:exact.hex};
+  setMode("challenge");
+  $("challengeSwatch").style.background=challengeTarget.hex;
+  $("challengePrompt").textContent="Name this color";
+  $("challengeAnswer").value="";
+  challengeStart=performance.now();
+  $("challengeAnswer").focus();
+};
+
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SpeechRecognition){
+  const recognition=new SpeechRecognition();
+  recognition.lang="en-US";recognition.interimResults=false;recognition.maxAlternatives=1;
+  $("listenBtn").onclick=()=>{$("voiceStatus").textContent="Listening…";try{recognition.start();}catch(e){}};
+  recognition.onresult=e=>{
+    const result=e.results[0][0];
+    voiceTranscript=result.transcript.trim();
+    voiceConfidence=Number.isFinite(result.confidence)?result.confidence:null;
+    $("voiceStatus").textContent=`Heard: "${voiceTranscript}"${voiceConfidence!==null?" · browser confidence "+Math.round(voiceConfidence*100)+"%":""}`;
+  };
+  recognition.onerror=e=>$("voiceStatus").textContent="Speech recognition error: "+e.error;
+}else{
+  $("listenBtn").disabled=true;
+  $("voiceStatus").textContent="Speech recognition is not supported in this browser.";
+}
+
+const canvas=$("imageCanvas"),ctx=canvas.getContext("2d");
+$("imageInput").onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const img=new Image();
+  img.onload=()=>{
+    const scale=Math.min(canvas.width/img.width,canvas.height/img.height);
+    const w=img.width*scale,h=img.height*scale;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+  };
+  img.src=URL.createObjectURL(file);
+};
+canvas.onclick=e=>{
+  const rect=canvas.getBoundingClientRect();
+  const x=Math.floor((e.clientX-rect.left)*canvas.width/rect.width);
+  const y=Math.floor((e.clientY-rect.top)*canvas.height/rect.height);
+  const p=ctx.getImageData(x,y,1,1).data;
+  currentHex=rgbToHex(p[0],p[1],p[2]);
+  const near=nearestByDE(currentHex,NAMED_COLORS);
+  showBaseColor(currentHex,near.name);
+  currentExtraFlags=["Image pixel sampled; browser color-profile handling may affect the value"];
+  renderEvaluation({hex:currentHex,method:"Image sample",inputValue:`pixel (${x}, ${y})`,confidence:95,validity:94,fidelity:92,time:null,approxSpelling:false});
+};
+
+$("copyReportBtn").onclick=async()=>{
+  if(!lastReportText)return alert("Run an evaluation first.");
+  try{await navigator.clipboard.writeText(lastReportText);const old=$("copyReportBtn").textContent;$("copyReportBtn").textContent="Copied!";setTimeout(()=>$("copyReportBtn").textContent=old,1200);}
+  catch(e){alert("Copy failed. Select the report text manually.");}
+};
+$("downloadReportBtn").onclick=()=>{
+  if(!lastReportText)return alert("Run an evaluation first.");
+  const blob=new Blob([lastReportText],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=(lastEvaluationId||"color-evaluation")+".txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+};
+$("copyJsonBtn").onclick=async()=>{
+  if(!lastReportJson)return alert("Run an evaluation first.");
+  try{await navigator.clipboard.writeText(JSON.stringify(lastReportJson,null,2));const old=$("copyJsonBtn").textContent;$("copyJsonBtn").textContent="JSON copied!";setTimeout(()=>$("copyJsonBtn").textContent=old,1200);}
+  catch(e){alert("Copy failed.");}
+};
+$("clearReportBtn").onclick=()=>{
+  lastReportText="";lastReportJson=null;
+  $("structuredReport").textContent="Run an evaluation to generate a structured report.";
+  $("reportTimestamp").textContent="Not generated";
+  $("qualityFlagList").innerHTML='<span class="flag-chip good">Run an evaluation to generate flags</span>';
+  $("flagCount").textContent="0 concerns";
+};
+
+// Landing-page live preview.
+const heroCycle=[
+  ["Teal","#008080"],["Coffee","#6F4E37"],["Cream","#FFFDD0"],["Cobalt","#0047AB"],["Sage","#9CAF88"]
+];
+let heroIndex=0;
+function updateHero(){
+  const [name,hex]=heroCycle[heroIndex%heroCycle.length],rgb=hexToRgb(hex),lab=rgbToLab(...rgb);
+  $("heroSwatch").style.background=hex;$("heroName").textContent=name;$("heroHex").textContent=hex;
+  $("heroRgb").textContent=rgb.join(", ");$("heroLab").textContent=`${fmt(lab[0],1)}, ${fmt(lab[1],1)}, ${fmt(lab[2],1)}`;
+  const black=contrastRatio(rgb,[0,0,0]),white=contrastRatio(rgb,[255,255,255]);
+  $("heroContrast").textContent=(black>=white?"dark":"light")+" text · "+Math.max(black,white).toFixed(2)+":1";
+  heroIndex++;
+}
+updateHero();
+if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(updateHero,3200);
+
+showBaseColor("#008080","teal");
+videoPanelSync();
+
+if(new URLSearchParams(location.search).get("demo")==="1"){
+  setTimeout(()=>{
+    setMode("name");$("colorName").value="coffee";$("targetColor").value="#6F4E37";
+    $("evaluatorNotes").value="Showcase example with exact everyday color recognition and reference comparison.";
+    evaluateColor();
+  },100);
+}
+</script>
+</body>
+</html>
